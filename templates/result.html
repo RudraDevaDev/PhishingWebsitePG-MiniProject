@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phishing Website Detection Result</title>
+    <style>
+        /* Global styles */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Set font */
+            color: #333; /* Set text color */
+            margin: 0;
+            padding: 0;
+        }
+        .top-bar {
+            background-color: #9011b7; /* Set top bar background color */
+            color: #ffffffa3; /* Set text color */
+            padding: 10px; /* Add padding */
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .top-bar h1 {
+            margin: 0; /* Remove margin */
+        }
+        .top-bar .nav-btn {
+            background-color: transparent;
+            color: #fff;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: background-color 0.3s;
+        }
+        .top-bar .nav-btn:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        .top-section {
+            background-color: {{ 'red' if rf_prediction == 'Phishing' or xgb_prediction == 'Phishing' else 'green'}}; /* Set background color based on predicted label */
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            background-color: whitesmoke; /* Set container background color */
+        }
+        h1 {
+            color: #fbfbfb; /* Set heading color */
+        }
+        p {
+            margin-bottom: 10px;
+        }
+        table-wrapper {
+            overflow-x: auto; /* Enable horizontal scrolling */
+            max-width: 100%; /* Set maximum width */
+            margin-top: 20px; /* Add some top margin */
+        }
+        table {
+            border-collapse: collapse; /* Collapse border spacing */
+            width: 100%; /* Set table width */
+            table-layout: auto; /* Let the table adjust its width automatically */
+        }
+        th, td {
+            border: 1px solid #ddd; /* Add border */
+            padding: 10px; /* Add padding */
+            text-align: left; /* Align text to the left */
+            max-width: 200px; /* Set max-width for each cell */
+        }
+        th {
+            background-color: #f2f2f2; /* Set header background color */
+        }
+        .back-btn {
+            background-color: #007bff;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: background-color 0.3s;
+        }
+        .back-btn:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="top-bar">
+        <h1>Phishing Website Detection</h1>
+        <div>
+            <a class="nav-btn" href="index.html">Index</a>
+            <a class="nav-btn" href="about.html">About</a>
+        </div>
+    </div>
+    <div class="top-section">
+        <div class="container">
+            <center>
+                <p><strong>URL:</strong> {{ url }}</p><br>
+                <p><strong>RF Model Predicted Label:</strong> {{ rf_prediction }}</p><br>
+                <p><strong>XGBoost Model Predicted Label:</strong> {{ xgb_prediction }}</p><br>
+                <p><strong>Final Result:</strong> <b>
+                    {% if rf_prediction == xgb_prediction %}
+                        {{ 'Phishing' if rf_prediction == 'Phishing' else 'Legitimate' }}
+                    {% else %}
+                        Suspicious
+                    {% endif %}
+                </b></p>
+            </center>
+        </div>        
+    </div>
+    <div class="container">
+        <h2>Extracted Features:</h2>
+        <table-wrapper>
+            <table>
+                <tr>
+                    <th>Feature</th>
+                    <th>Value</th>
+                </tr>
+                {% for feature in features %}
+                <tr>
+                    <td>{{ feature[0] }}</td>
+                    <td>{{ feature[1] }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+        </table-wrapper>
+    </div>
+</body>
+</html>

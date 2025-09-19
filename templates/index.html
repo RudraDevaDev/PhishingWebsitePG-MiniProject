@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phishing Website Detection</title>
+    <style>
+        body {
+            background-image: url('/static/images/bg.jpg'); /* Replace 'path_to_your_image.jpg' with the actual URL or path to your image */
+            background-size: cover; /* Adjust background size */
+            background-position: center; /* Adjust background position */
+            font-family: Arial, sans-serif;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .content {
+            text-align: center;
+        }
+        h1 {
+            color: #d81159; /* Set heading color */
+        }
+        form {
+            margin-top: 20px; /* Add some top margin */
+            border-radius: 10px; /* Add rounded corners */
+            background-color: #fff; /* Set form background color */
+            padding: 20px; /* Add padding to form */
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Add box shadow */
+            position: relative; /* Set position relative for the loader */
+        }
+        input[type="text"] {
+            padding: 10px; /* Add padding to input */
+            width: 300px; /* Set input width */
+            border-radius: 5px; /* Add rounded corners */
+            border: 1px solid #ccc; /* Add border */
+        }
+        input[type="submit"] {
+            padding: 10px 20px; /* Add padding to submit button */
+            background-color: #007bff; /* Set button background color */
+            color: #fff; /* Set button text color */
+            border: none; /* Remove button border */
+            cursor: pointer; /* Add pointer cursor on hover */
+            border-radius: 5px; /* Add rounded corners */
+        }
+        input[type="submit"]:hover {
+            background-color: #0056b3; /* Change button background color on hover */
+        }
+        /* Loader styles */
+        .loader {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            border: 5px solid #f3f3f3; /* Light grey */
+            border-top: 5px solid #3498db; /* Blue */
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            display: none; /* Initially hidden */
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="content">
+        <h1>Phishing Website Detection</h1>
+        <form id="detectionForm" action="/check" method="post">
+            <input type="text" name="url" placeholder="Enter URL">
+            <input type="submit" value="Check">
+        </form>
+    </div>
+</body>
+</html>
+
