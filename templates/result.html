@@ -5,28 +5,29 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Phishing Website Detection Result</title>
     <style>
-        /* Global styles */
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Set font */
-            color: #333; /* Set text color */
+            font-family: 'Roboto';
+            font-size: 18px;
+            color: white;
             margin: 0;
             padding: 0;
+            background-color: black;
         }
         .top-bar {
-            background-color: #9011b7; /* Set top bar background color */
-            color: #ffffffa3; /* Set text color */
-            padding: 10px; /* Add padding */
+            background-color: #8329c2;
+            color: black;
+            padding: 10px;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
         .top-bar h1 {
-            margin: 0; /* Remove margin */
+            margin: 0;
+            color: #fff;
         }
         .top-bar .nav-btn {
             background-color: transparent;
             color: #fff;
-            border-radius: 5px;
             border: none;
             padding: 5px 10px;
             cursor: pointer;
@@ -37,41 +38,51 @@
             background-color: rgba(255, 255, 255, 0.1);
         }
         .top-section {
-            background-color: {{ 'red' if rf_prediction == 'Phishing' or xgb_prediction == 'Phishing' else 'green'}}; /* Set background color based on predicted label */
+            background-color: {{ 'red' if rf_prediction == 'Phishing' or xgb_prediction == 'Phishing' else 'green' }};
             padding: 20px;
+            color: white;
+            text-align: center;
         }
         .container {
-            max-width: 800px;
-            margin: 0 auto;
+            border: 2px solid #007bff;
+            max-width: 900px;
+            margin: 20px auto;
             padding: 20px;
             border-radius: 8px;
+            background-color: black;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            background-color: whitesmoke; /* Set container background color */
         }
-        h1 {
-            color: #fbfbfb; /* Set heading color */
+        .result-label {
+            font-size: 20px;
+            font-weight: bold;
         }
-        p {
-            margin-bottom: 10px;
+        .result-label.phishing {
+            color: red;
         }
-        table-wrapper {
-            overflow-x: auto; /* Enable horizontal scrolling */
-            max-width: 100%; /* Set maximum width */
-            margin-top: 20px; /* Add some top margin */
+        .result-label.legitimate {
+            color: green;
+        }
+        .result-label.suspicious {
+            color: orange;
+        }
+        .table-wrapper {
+            overflow-x: auto;
+            margin-top: 20px;
         }
         table {
-            border-collapse: collapse; /* Collapse border spacing */
-            width: 100%; /* Set table width */
-            table-layout: auto; /* Let the table adjust its width automatically */
+            /* border-collapse: collapse; */
+            width: 100%;
+            table-layout: auto;
         }
         th, td {
-            border: 1px solid #ddd; /* Add border */
-            padding: 10px; /* Add padding */
-            text-align: left; /* Align text to the left */
-            max-width: 200px; /* Set max-width for each cell */
+            border: 2px solid #007bff;
+            padding: 10px;
+            text-align: left;
+            border-radius: 15px;
+            max-width: 200px;
         }
         th {
-            background-color: #f2f2f2; /* Set header background color */
+            background-color: black;
         }
         .back-btn {
             background-color: #007bff;
@@ -89,32 +100,43 @@
     </style>
 </head>
 <body>
+    <!-- Top Navigation -->
     <div class="top-bar">
         <h1>Phishing Website Detection</h1>
         <div>
-            <a class="nav-btn" href="index.html">Index</a>
-            <a class="nav-btn" href="about.html">About</a>
+            <a class="nav-btn" href="{{ url_for('index') }}">Home</a>
+            <a class="nav-btn" href="#">About</a>
         </div>
     </div>
+
+    <!-- Prediction Section -->
     <div class="top-section">
         <div class="container">
-            <center>
-                <p><strong>URL:</strong> {{ url }}</p><br>
-                <p><strong>RF Model Predicted Label:</strong> {{ rf_prediction }}</p><br>
-                <p><strong>XGBoost Model Predicted Label:</strong> {{ xgb_prediction }}</p><br>
-                <p><strong>Final Result:</strong> <b>
+            <p><strong>URL:</strong> {{ url }}</p>
+            <p><strong>RF Model Predicted Label:</strong> {{ rf_prediction }}</p>
+            <p><strong>XGBoost Model Predicted Label:</strong> {{ xgb_prediction }}</p>
+            <p><strong>Final Result:</strong> 
+                <span class="result-label 
+                    {% if rf_prediction == xgb_prediction %}
+                        {{ 'phishing' if rf_prediction == 'Phishing' else 'legitimate' }}
+                    {% else %}
+                        suspicious
+                    {% endif %}">
                     {% if rf_prediction == xgb_prediction %}
                         {{ 'Phishing' if rf_prediction == 'Phishing' else 'Legitimate' }}
                     {% else %}
                         Suspicious
                     {% endif %}
-                </b></p>
-            </center>
+                </span>
+            </p>
+            <a href="{{ url_for('index') }}" class="back-btn">Back to Home</a>
         </div>        
     </div>
+
+    <!-- Extracted Features -->
     <div class="container">
-        <h2>Extracted Features:</h2>
-        <table-wrapper>
+        <h2>Extracted Features</h2>
+        <div class="table-wrapper">
             <table>
                 <tr>
                     <th>Feature</th>
@@ -127,7 +149,7 @@
                 </tr>
                 {% endfor %}
             </table>
-        </table-wrapper>
+        </div>
     </div>
 </body>
 </html>
