@@ -4,79 +4,173 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Phishing Website Detection</title>
+    <script src="script.js"></script>
     <style>
-        body {
-            background-image: url('/static/images/bg.jpg'); /* Replace 'path_to_your_image.jpg' with the actual URL or path to your image */
-            background-size: cover; /* Adjust background size */
-            background-position: center; /* Adjust background position */
-            font-family: Arial, sans-serif;
-            color: #333;
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            font-family: 'Roboto';
+            font-size: 18px;
+        }
+        .container {
             display: flex;
+            height: 100vh;   /* full height */
+            width: 100vw;    /* full width */
+        }
+        .left, .right {
+            flex: 1;
+            padding: 40px;
+            box-sizing: border-box;
+            overflow-y: auto;
+        }
+        .left {
+            background: #8329c2;
+            display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
-            height: 100vh;
-            margin: 0;
         }
-        .content {
-            text-align: center;
-        }
-        h1 {
-            color: #d81159; /* Set heading color */
+        .left h1 {
+            color: white;
+            margin-bottom: 20px;
         }
         form {
-            margin-top: 20px; /* Add some top margin */
-            border-radius: 10px; /* Add rounded corners */
-            background-color: #fff; /* Set form background color */
-            padding: 20px; /* Add padding to form */
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Add box shadow */
-            position: relative; /* Set position relative for the loader */
+            width: 100%;
+            max-width: 450px;
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 20px 10px 10px rgba(0,0,0,0.1);
         }
         input[type="text"] {
-            padding: 10px; /* Add padding to input */
-            width: 300px; /* Set input width */
-            border-radius: 5px; /* Add rounded corners */
-            border: 1px solid #ccc; /* Add border */
+            width: 94%;
+            padding: 12px;
+            font-size: 16px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
         }
         input[type="submit"] {
-            padding: 10px 20px; /* Add padding to submit button */
-            background-color: #007bff; /* Set button background color */
-            color: #fff; /* Set button text color */
-            border: none; /* Remove button border */
-            cursor: pointer; /* Add pointer cursor on hover */
-            border-radius: 5px; /* Add rounded corners */
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
         }
         input[type="submit"]:hover {
-            background-color: #0056b3; /* Change button background color on hover */
+            background: #0056b3;
         }
-        /* Loader styles */
-        .loader {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            border: 5px solid #f3f3f3; /* Light grey */
-            border-top: 5px solid #3498db; /* Blue */
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            animation: spin 1s linear infinite;
-            display: none; /* Initially hidden */
+        .message {
+            margin-top: 10px;
+            color: red;
+            font-weight: bold;
         }
 
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+        /* Right side table */
+        .right {
+            background: #000000;
+            display: flex;
+            flex-direction: column;
+        }
+        .right h2 {
+            color:white;
+            margin-top: 0;
+        }
+        table {
+            border: 0px solid #00fffa;
+            /* width: 100%; */
+            /* border-collapse: collapse; */
+            border-radius: 10px;
+            flex-grow: 1; /*table expands to full height */
+        }
+        th, td {
+            color: white;
+            border: 2px solid #007bff;
+            border-radius: 15px;
+            padding: 15px;
+            text-align: left;
+        }
+        th {
+            color: white;
+            background: #000000;
+        }
+        .phishing {
+            color: red;
+            font-weight: bold;
+        }
+        .legit {
+            color: greenyellow;
+            font-weight: bold;
+        }
+        .feedback {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .feedback span {
+            font-size: 14px;
         }
     </style>
 </head>
 <body>
-    <div class="content">
-        <h1>Phishing Website Detection</h1>
-        <form id="detectionForm" action="/check" method="post">
-            <input type="text" name="url" placeholder="Enter URL">
-            <input type="submit" value="Check">
-        </form>
+    <div class="container">
+        <!-- Left side -->
+        <div class="left">
+            <h1>Phishing Website Detection</h1>
+            <form id="detectionForm" action="/check" method="post">
+                <input type="text" name="url" placeholder="Enter URL">
+                <input type="submit" value="Check">
+                {% if message %}
+                    <p class="message">{{ message }}</p>
+                {% endif %}
+            </form>
+            <!-- <footer><button>About Us</button></footer> -->
+            
+        </div>
+
+        <!-- Right side -->
+        <div class="right">
+            <h2>Recent Checks
+                      <span style="
+        font-size: 14px; 
+        font-weight: bold;
+        color: {% if accuracy >= 80 %}green
+               {% elif accuracy >= 50 %}orange
+               {% else %}red{% endif %};
+    ">Accuracy: {{ accuracy }}% </span>
+            </h2>
+            <table>                
+                <tr>
+                    <th>URL</th>
+                    <th>Prediction</th>
+                    <th>Feedback</th>
+                </tr>
+                {% for item in recent_url %}
+                <tr>
+                    <td>{{ item.url }}</td>
+                    <td>
+                        <span class="{{ 'phishing' if item.final_prediction == 'Phishing' else 'legit' }}">
+                        {{ item.final_prediction }}
+                        </span>
+                    </td>
+                    <td>
+                        {% if item.user_feedback == None %}
+                        <button onclick="sendFeedback('{{ item._id }}','true')">✅</button>
+                        <button onclick="sendFeedback('{{ item._id }}','false')">❌</button>
+                        {% elif item.user_feedback == True %}
+                        ✅ Correct
+                        {% elif item.user_feedback == False %}
+                        ❌ Wrong
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}  
+            </table>
+        </div>
     </div>
 </body>
 </html>
-
